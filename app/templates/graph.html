@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Financials UI</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script type="text/javascript">
+            window.onload = function () {
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    title: {
+                        text: "Investing Results",
+                        fontSize: 30
+                    },
+                    animationEnabled: true,
+                    axisX: {
+                        gridColor: "Silver",
+                        tickColor: "silver",
+                        valueFormatString: "YYYY"
+                    },
+                    toolTip: {
+                        shared: true
+                    },
+                    theme: "theme2",
+                    axisY: {
+                        gridColor: "Silver",
+                        tickColor: "silver"
+                    },
+                    legend: {
+                        verticalAlign: "center",
+                        horizontalAlign: "right"
+                    },
+                    data: [
+                    {% for key, investment in investing.items %}
+                    {
+                        type: "line",
+                        showInLegend: true,
+                        name: "Investing",
+                        color: "{{investment.color}}",
+                        lineThickness: 2,
+
+                        dataPoints: [
+                        {% for yearData in investment.results %}
+                        { x: new Date({{yearData.year}}, 0, 1), y: {{yearData.amount}} },
+                        {% endfor %}
+                        ]
+                    },
+                    {% endfor %}
+                    {
+                        type: "line",
+                        showInLegend: true,
+                        name: "Retirement",
+                        color: "#20B2AA",
+                        lineThickness: 2,
+
+                        dataPoints: [
+                        {% for yearData in retirement %}
+                        { x: new Date({{yearData.year}}, 0, 1), y: {{yearData.amount}} },
+                        {% endfor %}
+                        ]
+                    }
+                    ],
+                    legend: {
+                        cursor: "pointer",
+                        itemclick: function (e) {
+                            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                                e.dataSeries.visible = false;
+                            }
+                            else {
+                                e.dataSeries.visible = true;
+                            }
+                            chart.render();
+                        }
+                    }
+                });
+
+                chart.render();
+            }
+        </script>
+        <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <style>
+            form {
+                width: 500px; 
+                margin: 0px auto;
+            }
+
+            .input-group: {
+                padding-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="chartContainer" style="height: 400px; width: 100%;">
+    </body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Financials UI</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <style>
+            form {
+                width: 500px; 
+                margin: 0px auto;
+            }
+
+            .input-group: {
+                padding-top: 10px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <form action="/generate/" method="post">
+            {% csrf_token %}
+            <h2>General Information</h2>
+
+            <div class="input-group">
+                <label for="generalYearsBefore">Years Before Retirement </label>
+                <input type="text" class="form-control" placeholder="30" name="generalYearsBefore" required/>
+            </div>
+
+            <div class="input-group">
+                <label for="generalAnnualSpending">Yearly Spending Amount In Retirement: </label>
+                <input type="text" class="form-control" placeholder="50000"  name="generalAnnualSpending" required/>
+            </div>
+
+            <div class="input-group">
+                <label for="generalAnnualInflation">Expected Annual Inflation Amount: </label>
+                <input type="text" class="form-control" placeholder=".02"  name="generalAnnualInflation" required/>
+            </div>
+
+            <div class="input-group">
+                <label for="generalReturnRate">Investments Rate of Return After Retirement: </label>
+                <input type="text" class="form-control" placeholder=".03"  name="generalReturnRate" required/>
+            </div>
+
+            <h2>Investments Information</h2>
+
+            <div id="investment1" class="investentGroup">
+                <h3>Investment 1</h3>
+
+                <div class="input-group">
+                    <label for="investment1Amount">Investment: </label>
+                    <input type="text" class="form-control" placeholder="10000"  name="investment1Amount" required/>
+                </div>
+
+                <div class="input-group">
+                    <label for="investment1Contribution">Recurring Contribution: </label>
+                    <input type="text" class="form-control" placeholder="200"  name="investment1Contribution" required/>
+                </div>
+
+                <div class="input-group">
+                    <label for="investment1ReturnRate">Rate of Return: </label>
+                    <input type="text" class="form-control" placeholder=".03"  name="investment1ReturnRate" required/>
+                </div>
+            <div>
+
+            <div class="input-group" id="addInvestmentBtn">
+                <button id="addInvestment">Add Another Investment</button>
+            </div>
+
+            <div class="input-group">
+                <input type="submit" value="Generate">
+            </div>
+        </form>
+        <script>
+            $( "#addInvestment" ).click(function(event) {
+
+                event.preventDefault();
+
+                console.log($(".investentGroup").last().attr("id"));
+
+                investmentNumber = $(".investentGroup").last().attr("id").replace('investment', '');
+                investmentNumber = parseInt(investmentNumber) + 1;
+
+                html =  '<div id="investment' + investmentNumber + '" class="investentGroup">';
+                html += '<h3>Investment ' + investmentNumber + '</h3>';
+                html += '<div class="input-group">';
+                html += '<label for="investment' + investmentNumber + 'Amount">Investment: </label>';
+                html += '<input type="text" class="form-control" placeholder="10000"  name="investment' + investmentNumber + 'Amount" required/>';
+                html += '</div>';
+                html += '<div class="input-group">';
+                html += '<label for="investment' + investmentNumber + 'Contribution">Recurring Contribution: </label>';
+                html += '<input type="text" class="form-control" placeholder="200"  name="investment' + investmentNumber + 'Contribution" required/>';
+                html += '</div>';
+                html += '<div class="input-group">';
+                html += '<label for="investment' + investmentNumber + 'ReturnRate">Rate of Return: </label>';
+                html += '<input type="text" class="form-control" placeholder=".03"  name="investment' + investmentNumber + 'ReturnRate" required/>';
+                html += '</div>';
+                html += '</div>';
+
+                $(html).insertBefore( "#addInvestmentBtn" )
+
+                // alert('Test');
+            });
+        </script>
+    </body>
+</html>
