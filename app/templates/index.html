@@ -24,22 +24,22 @@
 
             <div class="input-group">
                 <label for="generalYearsBefore">Years Before Retirement </label>
-                <input type="text" class="form-control" placeholder="30" name="generalYearsBefore" required/>
+                <input type="text" class="form-control" placeholder="30" name="generalYearsBefore" pattern="^\d{1,3}$" title="Years can be between 1 and 999" required/>
             </div>
 
             <div class="input-group">
                 <label for="generalAnnualSpending">Yearly Spending Amount In Retirement: </label>
-                <input type="text" class="form-control" placeholder="50000"  name="generalAnnualSpending" required/>
+                <input type="text" class="form-control" placeholder="50000" name="generalAnnualSpending" pattern="^\d+\.?\d{2}?$" title="Value must be either a whole number (10000) or a whole number with a two digit decimal (10000.50)" required/>
             </div>
 
             <div class="input-group">
                 <label for="generalAnnualInflation">Expected Annual Inflation Amount: </label>
-                <input type="text" class="form-control" placeholder=".02"  name="generalAnnualInflation" required/>
+                <input type="text" class="form-control" placeholder=".02" name="generalAnnualInflation" pattern="^\.\d{2}$" title="Value must be a decimal with two digits" required/>
             </div>
 
             <div class="input-group">
                 <label for="generalReturnRate">Investments Rate of Return After Retirement: </label>
-                <input type="text" class="form-control" placeholder=".03"  name="generalReturnRate" required/>
+                <input type="text" class="form-control" placeholder=".03" name="generalReturnRate" pattern="^\.\d{2}$" title="Value must be a decimal with two digits" required/>
             </div>
 
             <h2>Investments Information</h2>
@@ -49,17 +49,17 @@
 
                 <div class="input-group">
                     <label for="investment1Amount">Investment: </label>
-                    <input type="text" class="form-control" placeholder="10000"  name="investment1Amount" required/>
+                    <input type="text" class="form-control" placeholder="10000" pattern="^\d+\.?\d{2}?$" title="Value must be either a whole number (10000) or a whole number with a two digit decimal (10000.50)" name="investment1Amount" required/>
                 </div>
 
                 <div class="input-group">
                     <label for="investment1Contribution">Recurring Contribution: </label>
-                    <input type="text" class="form-control" placeholder="200"  name="investment1Contribution" required/>
+                    <input type="text" class="form-control" placeholder="200" pattern="^\d+\.?\d{2}?$" title="Value must be either a whole number (10000) or a whole number with a two digit decimal (10000.50)" name="investment1Contribution" required/>
                 </div>
 
                 <div class="input-group">
                     <label for="investment1ReturnRate">Rate of Return: </label>
-                    <input type="text" class="form-control" placeholder=".03"  name="investment1ReturnRate" required/>
+                    <input type="text" class="form-control" placeholder=".03" pattern="^\.\d{2}$" title="Value must be a decimal with two digits" name="investment1ReturnRate" required/>
                 </div>
             <div>
 
@@ -85,15 +85,15 @@
                 html += '<h3>Investment ' + investmentNumber + '</h3>';
                 html += '<div class="input-group">';
                 html += '<label for="investment' + investmentNumber + 'Amount">Investment: </label>';
-                html += '<input type="text" class="form-control" placeholder="10000"  name="investment' + investmentNumber + 'Amount" required/>';
+                html += '<input type="text" class="form-control" placeholder="10000" pattern="^\\d+\\.?\\d{2}?$" title="Value must be either a whole number (10000) or a whole number with a two digit decimal (10000.50)" name="investment' + investmentNumber + 'Amount" required/>';
                 html += '</div>';
                 html += '<div class="input-group">';
                 html += '<label for="investment' + investmentNumber + 'Contribution">Recurring Contribution: </label>';
-                html += '<input type="text" class="form-control" placeholder="200"  name="investment' + investmentNumber + 'Contribution" required/>';
+                html += '<input type="text" class="form-control" placeholder="200" pattern="^\\d+\\.?\\d{2}?$" title="Value must be either a whole number (10000) or a whole number with a two digit decimal (10000.50)" name="investment' + investmentNumber + 'Contribution" required/>';
                 html += '</div>';
                 html += '<div class="input-group">';
                 html += '<label for="investment' + investmentNumber + 'ReturnRate">Rate of Return: </label>';
-                html += '<input type="text" class="form-control" placeholder=".03"  name="investment' + investmentNumber + 'ReturnRate" required/>';
+                html += '<input type="text" class="form-control" placeholder=".03" pattern="^\\.\\d{2}$" title="Value must be a decimal with two digits" name="investment' + investmentNumber + 'ReturnRate" required/>';
                 html += '</div>';
                 html += '</div>';
 
