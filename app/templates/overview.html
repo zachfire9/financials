@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Overview</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div style="padding-left: 10px;">
+            <p>User Name: {{user.name}}</p>
+            <p>Retirement Delta Months: {{user.retirementDeltaMonths}}</p>
+            <p>Retirement Delta Years: {{user.retirementDeltaYears}}</p>
+            <p>Total Retirement Amount: {{user.totalRetirementAmount}}</p>
+            <hr>
+            {% for investment in investments %}
+            <p>Investment Name: {{investment.name}}</p>
+            <p>Starting Amount: {{investment.currentAmount}}</p>
+            <p>Final Amount: {{investment.finalAmount}}</p>
+            <hr>
+
+<!--        
+            {% for breakdown in investment.retirementSummary.montlyBreakdown %}
+            <p>Total Amount: {{breakdown.totalAmount}}</p>
+            <p>Monthly Payment: {{breakdown.monthlyPayment}}</p>
+            <p>Interest Amount: {{breakdown.interestAmount}}</p>
+            <hr>
+            {% endfor %} -->
+
+            {% endfor %}
+        </div>
+    </body>
+</html>
