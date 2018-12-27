@@ -1,60 +1,69 @@
+"""Views for the application."""
 from django.conf import settings
 from django.http import HttpResponse
 from django.template import loader
 import datetime
 # import dateutil
 from dateutil.relativedelta import relativedelta
+import copy
 import json
 import logging
 import pytz
+import random
 import re
 import requests
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
+# red, purple, teal, green, blue, pink, maroon, brownish, violet
+colors = ['#F08080', '#6B33FF', '#25CCED', '#18bf45', '#131eb2', '#fc43f1', '#860240', '#964939', '#ab7cdd']
 FINANCIALS_ENDPOINT = getattr(settings, "FINANCIALS_ENDPOINT", None)
 
+
 def index(request):
+    """The main method."""
     template = loader.get_template('index.html')
     return HttpResponse(template.render({}, request))
 
+
 def generate(request):
+    """Generate method."""
     logger.debug('---- Form Data ----')
     logger.debug(request.POST)
 
-    investmentCollection = dict()
-    investmentKeyRegex = re.compile('^investment\d+')
-    requestJSON = {
+    investment_collection = dict()
+    investment_key_regex = re.compile('^investment\d+')
+    request_json = {
         'yearsBefore': request.POST['generalYearsBefore'],
         'annualSpending': request.POST['generalAnnualSpending'],
         'annualInflation': request.POST['generalAnnualInflation'],
         'returnRate': request.POST['generalReturnRate'],
     }
-    
+
     for key in request.POST:
         if key == 'csrfmiddlewaretoken':
             continue
 
-        if investmentKeyRegex.match(key) == None:
+        if investment_key_regex.match(key) is None:
             continue
 
         # Get the beginning of the form field name
-        keyMatch = investmentKeyRegex.match(key).group()
+        key_match = investment_key_regex.match(key).group()
         # Get which number investment it is
-        keyNumber = keyMatch.replace('investment', '')
+        key_number = key_match.replace('investment', '')
         # Get the actual form field names without the investment stuff
-        keyText = key.replace(keyMatch, '')
+        key_text = key.replace(key_match, '')
         # Lowercase to match what the API is expecting
-        formattedKeyText = keyText[0].lower() + keyText[1:]
+        formatted_key_text = key_text[0].lower() + key_text[1:]
 
         # Check to see if the index has is not yet created when storing the value
-        if investmentCollection.get(keyNumber) == None:
-            investmentCollection[keyNumber] = { formattedKeyText: request.POST[key] }
+        if investment_collection.get(key_number) is None:
+            investment_collection[key_number] = {formatted_key_text: request.POST[key]}
         else:
-            investmentCollection[keyNumber][formattedKeyText] = request.POST[key]
+            investment_collection[key_number][formatted_key_text] = request.POST[key]
 
-    requestJSON['investments'] = []
+    request_json['investments'] = []
     context = {
         'investing': dict(),
         'retirement': []
@@ -62,30 +71,30 @@ def generate(request):
 
     colors = ['#F08080', '#6B33FF', '#25CCED']
 
-    for key in investmentCollection:
-        requestJSON['investments'].append(investmentCollection[key])
+    for key in investment_collection:
+        request_json['investments'].append(investment_collection[key])
         context['investing'][key] = dict(color=colors[int(key)], results=[])
 
     logger.debug('---- Request Message ----')
-    logger.debug(requestJSON)
+    logger.debug(request_json)
 
-    response = requests.post(FINANCIALS_ENDPOINT, data=json.dumps(requestJSON), headers={'Content-Type': 'application/json'})
+    response = requests.post(FINANCIALS_ENDPOINT, data=json.dumps(request_json), headers={'Content-Type': 'application/json'})
     logger.debug('---- Response Message ----')
     logger.debug(response.json())
 
     now = datetime.datetime.now()
-    totalYearCount = 0
-    yearRecord = now.year
+    total_year_count = 0
+    year_record = now.year
     for yearData in response.json()['years']:
-        investmentCount = 1
-        if totalYearCount < int(request.POST['generalYearsBefore']):
+        investment_count = 1
+        if total_year_count < int(request.POST['generalYearsBefore']):
             for investment in yearData['investments']:
-                context['investing'][str(investmentCount)]['results'].append({ 'amount': investment['amount'], 'year': yearRecord })
-                investmentCount += 1
+                context['investing'][str(investment_count)]['results'].append({'amount': investment['amount'], 'year': year_record})
+                investment_count += 1
         else:
-            context['retirement'].append({ 'amount': yearData['amount'], 'year': yearRecord })
-        totalYearCount += 1
-        yearRecord += 1
+            context['retirement'].append({'amount': yearData['amount'], 'year': year_record})
+        total_year_count += 1
+        year_record += 1
 
     logger.debug('---- View Data ----')
     logger.debug(context)
@@ -93,7 +102,9 @@ def generate(request):
     template = loader.get_template("graph.html")
     return HttpResponse(template.render(context))
 
+
 def overview(request):
+    """Overview method."""
     # Get user object
     logger.debug('---- User Request ----')
     users_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'users/5bfafabf696bf66e8d87713f')
@@ -117,8 +128,9 @@ def overview(request):
     retirement_datetime = datetime.datetime.strptime(retirement_date, '%Y-%m-%dT%H:%M:%S%z')
 
     retirement_delta = 0
-    while now < retirement_datetime:
-        now += relativedelta(months=1)
+    year_increment = now
+    while year_increment < retirement_datetime:
+        year_increment += relativedelta(months=1)
         retirement_delta += 1
 
     user['retirementDeltaMonths'] = retirement_delta
@@ -132,7 +144,8 @@ def overview(request):
         for investment in investments:
             if 'retirementSummary' not in investment:
                 investment['retirementSummary'] = {
-                    'montlyBreakdown': [],
+                    'monthlyBreakdown': [],
+                    'yearlyBreakdown': [],
                     'totalAmount': float(investment['currentAmount']),
                     'interestMonthlyExpected': float(investment['interestAnnualExpected']) / 12
                 }
@@ -152,10 +165,23 @@ def overview(request):
                 'monthlyPayment': investment['paymentMonthly'],
                 'interestAmount': interest_amount
             }
-            investment['retirementSummary']['montlyBreakdown'].append(monthly_breakdown)
+            investment['retirementSummary']['monthlyBreakdown'].append(monthly_breakdown)
+
+            if ((month_count + 1) % 12) is 0:
+                yearly_breakdown = {
+                    'year': now.year + ((month_count + 1) / 12),
+                    'totalAmount': total_amount,
+                    'monthlyPayment': investment['paymentMonthly'],
+                    'interestAmount': interest_amount
+                }
+                investment['retirementSummary']['yearlyBreakdown'].append(yearly_breakdown)
 
     total_retirement_amount = 0
+    investment_colors = copy.copy(colors)
     for investment in investments:
+        investment_color = random.choice(investment_colors)
+        investment['color'] = investment_color
+        investment_colors.remove(investment_color)
         total_retirement_amount += investment['finalAmount']
 
     user['totalRetirementAmount'] = total_retirement_amount
