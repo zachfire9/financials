@@ -111,7 +111,6 @@ def details_update(request):
     user_request = {}
     investment_collection = {}
     for key in request.POST:
-        print(key)
         if key == 'csrfmiddlewaretoken':
             continue
 
@@ -176,7 +175,7 @@ def details(request):
         investment['count'] = investment_count
 
     context = {
-        'user': user,
+        'investor': user,
         'investments': investments,
     }
 
@@ -270,9 +269,9 @@ def overview(request):
     user['totalRetirementAmount'] = "{:,}".format(round(total_retirement_amount, 2))
 
     context = {
-        'user': user,
+        'investor': user,
         'investments': investments,
     }
 
     template = loader.get_template("overview.html")
-    return HttpResponse(template.render(context))
+    return HttpResponse(template.render(context, request))

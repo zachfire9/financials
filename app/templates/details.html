@@ -1,88 +1,72 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Financials UI</title>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-        <style>
-            form {
-                width: 500px; 
-                margin: 0px auto;
-            }
+{% extends 'base.html' %}
 
-            .input-group: {
-                padding-top: 10px;
-            }
-        </style>
-    </head>
+{% block content %}
 
-    <body>
-        <form action="/details-update/" method="post">
-            {% csrf_token %}
-            <h2>User Information</h2>
+<form action="/details-update/" method="post">
+{% csrf_token %}
+<h2>User Information</h2>
 
-            <input type="hidden" name="userId" value="{{user.id}}" />
+<input type="hidden" name="userId" value="{{investor.id}}" />
 
-            <div class="input-group">
-                <label for="userName">Name </label>
-                <input type="text" class="form-control" placeholder="" name="userName" title="Name of the investor" value="{{user.name}}" required/>
-            </div>
+<div class="input-group">
+    <label for="userName">Name </label>
+    <input type="text" class="form-control" placeholder="" name="userName" title="Name of the investor" value="{{investor.name}}" required/>
+</div>
 
-            <div class="input-group">
-                <label for="userEmail">Email </label>
-                <input type="text" class="form-control" placeholder="" name="userEmail" title="Email of the investor" value="{{user.email}}" required/>
-            </div>
+<div class="input-group">
+    <label for="userEmail">Email </label>
+    <input type="text" class="form-control" placeholder="" name="userEmail" title="Email of the investor" value="{{investor.email}}" required/>
+</div>
 
-            <div class="input-group">
-                <label for="userRetirementDate">Retirement Date </label>
-                <input type="text" class="form-control" placeholder="" name="userRetirementDate" title="Target retirement date" value="{{user.retirementDate}}" required/>
-            </div>
+<div class="input-group">
+    <label for="userRetirementDate">Retirement Date </label>
+    <input type="text" class="form-control" placeholder="" name="userRetirementDate" title="Target retirement date" value="{{investor.retirementDate}}" required/>
+</div>
 
-            <div class="input-group">
-                <label for="userRetirementLivingAmount">Retirement Living Amount </label>
-                <input type="text" class="form-control" placeholder="" name="userRetirementLivingAmount" title="Target yearly retirement income in today's dollars" value="{{user.retirementLivingAmount}}" required/>
-            </div>
+<div class="input-group">
+    <label for="userRetirementLivingAmount">Retirement Living Amount </label>
+    <input type="text" class="form-control" placeholder="" name="userRetirementLivingAmount" title="Target yearly retirement income in today's dollars" value="{{investor.retirementLivingAmount}}" required/>
+</div>
 
-            <div class="input-group">
-                <label for="userInflationAnnualExpected">Inflation Annual Expected </label>
-                <input type="text" class="form-control" placeholder="" name="userInflationAnnualExpected" title="Expected yearly inflation" value="{{user.inflationAnnualExpected}}" required/>
-            </div>
+<div class="input-group">
+    <label for="userInflationAnnualExpected">Inflation Annual Expected </label>
+    <input type="text" class="form-control" placeholder="" name="userInflationAnnualExpected" title="Expected yearly inflation" value="{{investor.inflationAnnualExpected}}" required/>
+</div>
 
-            <hr />
+<hr />
 
-            <h2>Investment Information</h2>
+<h2>Investment Information</h2>
 
-            {% for investment in investments %}
+{% for investment in investments %}
 
-            <input type="hidden" name="investment{{investment.count}}Id" value="{{investment.id}}" />
+<input type="hidden" name="investment{{investment.count}}Id" value="{{investment.id}}" />
 
-            <div class="input-group">
-                <label for="investment{{investment.count}}Name">Name </label>
-                <input type="text" class="form-control" placeholder="" name="investment{{investment.count}}Name" title="Name of the investment" value="{{investment.name}}" required/>
-            </div>
+<div class="input-group">
+    <label for="investment{{investment.count}}Name">Name </label>
+    <input type="text" class="form-control" placeholder="" name="investment{{investment.count}}Name" title="Name of the investment" value="{{investment.name}}" required/>
+</div>
 
-            <div class="input-group">
-                <label for="investment{{investment.count}}CurrentAmount">Current Amount </label>
-                <input type="text" class="form-control" placeholder="" name="investment{{investment.count}}CurrentAmount" title="Amount in this investment today" value="{{investment.currentAmount}}" required/>
-            </div>
+<div class="input-group">
+    <label for="investment{{investment.count}}CurrentAmount">Current Amount </label>
+    <input type="text" class="form-control" placeholder="" name="investment{{investment.count}}CurrentAmount" title="Amount in this investment today" value="{{investment.currentAmount}}" required/>
+</div>
 
-            <div class="input-group">
-                <label for="investment{{investment.count}}InterestAnnualExpected">Annual Interest Expected </label>
-                <input type="text" class="form-control" placeholder="" name="investment{{investment.count}}InterestAnnualExpected" title="Annual interest expected for this investment" value="{{investment.interestAnnualExpected}}" required/>
-            </div>
+<div class="input-group">
+    <label for="investment{{investment.count}}InterestAnnualExpected">Annual Interest Expected </label>
+    <input type="text" class="form-control" placeholder="" name="investment{{investment.count}}InterestAnnualExpected" title="Annual interest expected for this investment" value="{{investment.interestAnnualExpected}}" required/>
+</div>
 
-            <div class="input-group">
-                <label for="investment{{investment.count}}PaymentMonthly">Monthly Contribution </label>
-                <input type="text" class="form-control" placeholder="" name="investment{{investment.count}}PaymentMonthly" title="Monthly contribution for this investment" value="{{investment.paymentMonthly}}" required/>
-            </div>
+<div class="input-group">
+    <label for="investment{{investment.count}}PaymentMonthly">Monthly Contribution </label>
+    <input type="text" class="form-control" placeholder="" name="investment{{investment.count}}PaymentMonthly" title="Monthly contribution for this investment" value="{{investment.paymentMonthly}}" required/>
+</div>
 
-            <hr />
+<hr />
 
-            {% endfor %}
+{% endfor %}
 
-            <div class="input-group">
-                <input type="submit" value="Save">
-            </div>
-    </body>
-</html>
+<div class="input-group">
+    <input type="submit" value="Save">
+</div>
+
+{% endblock %}
