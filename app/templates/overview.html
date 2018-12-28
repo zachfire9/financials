@@ -79,12 +79,12 @@
             <p>User Name: {{user.name}}</p>
             <p>Retirement Delta Months: {{user.retirementDeltaMonths}}</p>
             <p>Retirement Delta Years: {{user.retirementDeltaYears}}</p>
-            <p>Total Retirement Amount: {{user.totalRetirementAmount}}</p>
+            <p>Total Retirement Amount: ${{user.totalRetirementAmount}}</p>
             <hr>
             {% for investment in investments %}
             <p>Investment Name: {{investment.name}}</p>
-            <p>Starting Amount: {{investment.currentAmount}}</p>
-            <p>Final Amount: {{investment.finalAmount}}</p>
+            <p>Starting Amount: ${{investment.initialAmountFormatted}}</p>
+            <p>Final Amount: ${{investment.finalAmountFormatted}}</p>
             <hr>
 
             {% endfor %}

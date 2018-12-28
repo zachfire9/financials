@@ -2,8 +2,8 @@
 from django.conf import settings
 from django.http import HttpResponse
 from django.template import loader
+from django.shortcuts import redirect
 import datetime
-# import dateutil
 from dateutil.relativedelta import relativedelta
 import copy
 import json
@@ -103,6 +103,87 @@ def generate(request):
     return HttpResponse(template.render(context))
 
 
+def details_update(request):
+    """Detail method."""
+    user_key_regex = re.compile('^user')
+    investment_key_regex = re.compile('^investment\d+')
+    user_id = None
+    user_request = {}
+    investment_collection = {}
+    for key in request.POST:
+        print(key)
+        if key == 'csrfmiddlewaretoken':
+            continue
+
+        if user_key_regex.match(key) is None and investment_key_regex.match(key) is None:
+            continue
+
+        if key == 'userId':
+            user_id = request.POST[key]
+
+        if user_key_regex.match(key):
+            user_key_match = user_key_regex.match(key).group()
+            # Get the actual form field names without the user stuff
+            key_text = key.replace(user_key_match, '')
+            # Lowercase to match what the API is expecting
+            formatted_key_text = key_text[0].lower() + key_text[1:]
+            user_request[formatted_key_text] = request.POST[key]
+
+        if investment_key_regex.match(key):
+            investment_key_match = investment_key_regex.match(key).group()
+            # Get which number investment it is
+            key_number = investment_key_match.replace('investment', '')
+            # Get the actual form field names without the investment stuff
+            key_text = key.replace(investment_key_match, '')
+            # Lowercase to match what the API is expecting
+            formatted_key_text = key_text[0].lower() + key_text[1:]
+
+            # Check to see if the index has is not yet created when storing the value
+            if investment_collection.get(key_number) is None:
+                investment_collection[key_number] = {formatted_key_text: request.POST[key]}
+            else:
+                investment_collection[key_number][formatted_key_text] = request.POST[key]
+
+    for key in investment_collection:
+        investment_request = investment_collection[key]
+        investment_request['userId'] = user_id
+        investments_endpoint = '{}/{}/{}'.format(FINANCIALS_ENDPOINT, 'investments', investment_request['id'])
+        requests.put(investments_endpoint, headers={'Content-Type': 'application/json'}, data=json.dumps(investment_request))
+
+    users_endpoint = '{}/{}/{}'.format(FINANCIALS_ENDPOINT, 'users', user_id)
+    requests.put(users_endpoint, headers={'Content-Type': 'application/json'}, data=json.dumps(user_request))
+
+    return redirect('/details/')
+
+
+def details(request):
+    """Detail method."""
+    # Get user object
+    logger.debug('---- User Request ----')
+    users_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'users/5bfafabf696bf66e8d87713f')
+    user_response = requests.get(users_endpoint, headers={'Content-Type': 'application/json'})
+    user = user_response.json()
+
+    # Get all investment objects for user id
+    logger.debug('---- Investments Request ----')
+    investments_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'investments')
+    investments_response = requests.get(investments_endpoint, headers={'Content-Type': 'application/json'})
+    investments = investments_response.json()
+
+    investment_count = 1
+    for investment in investments:
+        investment_count += 1
+        investment['count'] = investment_count
+
+    context = {
+        'user': user,
+        'investments': investments,
+    }
+
+    template = loader.get_template("details.html")
+    return HttpResponse(template.render(context, request))
+
+
 def overview(request):
     """Overview method."""
     # Get user object
@@ -183,8 +264,10 @@ def overview(request):
         investment['color'] = investment_color
         investment_colors.remove(investment_color)
         total_retirement_amount += investment['finalAmount']
+        investment['initialAmountFormatted'] = "{:,}".format(float(investment['currentAmount']), 2)
+        investment['finalAmountFormatted'] = "{:,}".format(round(investment['finalAmount'], 2))
 
-    user['totalRetirementAmount'] = total_retirement_amount
+    user['totalRetirementAmount'] = "{:,}".format(round(total_retirement_amount, 2))
 
     context = {
         'user': user,
