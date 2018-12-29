@@ -159,7 +159,7 @@ def details(request):
     """Detail method."""
     # Get user object
     logger.debug('---- User Request ----')
-    users_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'users/5bfafabf696bf66e8d87713f')
+    users_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'users/5c2673c4634aa10004017c51')
     user_response = requests.get(users_endpoint, headers={'Content-Type': 'application/json'})
     user = user_response.json()
 
@@ -187,7 +187,7 @@ def overview(request):
     """Overview method."""
     # Get user object
     logger.debug('---- User Request ----')
-    users_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'users/5bfafabf696bf66e8d87713f')
+    users_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'users/5c2673c4634aa10004017c51')
     user_response = requests.get(users_endpoint, headers={'Content-Type': 'application/json'})
     user = user_response.json()
 
