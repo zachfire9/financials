@@ -1,4 +1,4 @@
 Django==1.11.5
 pytz==2017.2
 requests==2.11.0
-dateutil==2.7.5
+python-dateutil==2.7.5
