@@ -11,3 +11,5 @@ heroku run python manage.py createsuperuser
 
 Make sure to add env var FINANCIALS_ENDPOINT with API endpoint.
 DJANGO_SETTINGS_MODULE env var should be set to financials.settings.prod
+The USER_ID env var is a temporary workaround to make the user id dynamic
+You can enable debugging by setting the DEBUG env var to True
