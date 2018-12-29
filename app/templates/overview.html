@@ -62,17 +62,23 @@
     }
 </script>
 <div>
-    <p>User Name: {{investor.name}}</p>
-    <p>Retirement Delta Months: {{investor.retirementDeltaMonths}}</p>
-    <p>Retirement Delta Years: {{investor.retirementDeltaYears}}</p>
-    <p>Total Retirement Amount: ${{investor.totalRetirementAmount}}</p>
+    <div class="investment-breakdown">
+        <p>User Name: {{investor.name}}</p>
+        <p>Retirement Delta Months: {{investor.retirementDeltaMonths}}</p>
+        <p>Retirement Delta Years: {{investor.retirementDeltaYears}}</p>
+        <p>Total Retirement Amount: ${{investor.totalRetirementAmount}}</p>
+    </div>
+    <div class="float-clear"></div>
     <hr>
     {% for investment in investments %}
-    <p>Investment Name: {{investment.name}}</p>
-    <p>Starting Amount: ${{investment.initialAmountFormatted}}</p>
-    <p>Final Amount: ${{investment.finalAmountFormatted}}</p>
-    <hr>
+    <div class="investment-breakdown">
+        <p>Investment Name: {{investment.name}}</p>
+        <p>Starting Amount: ${{investment.initialAmountFormatted}}</p>
+        <p>Final Amount: ${{investment.finalAmountFormatted}}</p>
+    </div>
     {% endfor %}
+    <div class="float-clear"></div>
+    <hr>
 </div>
 <div id="chartContainer" style="height: 400px; width: 100%;">
 

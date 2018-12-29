@@ -19,6 +19,7 @@ logging.basicConfig(level=logging.DEBUG)
 # red, purple, teal, green, blue, pink, maroon, brownish, violet
 colors = ['#F08080', '#6B33FF', '#25CCED', '#18bf45', '#131eb2', '#fc43f1', '#860240', '#964939', '#ab7cdd']
 FINANCIALS_ENDPOINT = getattr(settings, "FINANCIALS_ENDPOINT", None)
+USER_ID = getattr(settings, "USER_ID", None)
 
 
 def index(request):
@@ -159,7 +160,7 @@ def details(request):
     """Detail method."""
     # Get user object
     logger.debug('---- User Request ----')
-    users_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'users/5c2673c4634aa10004017c51')
+    users_endpoint = '{}/{}/{}'.format(FINANCIALS_ENDPOINT, 'users', USER_ID)
     user_response = requests.get(users_endpoint, headers={'Content-Type': 'application/json'})
     user = user_response.json()
 
@@ -187,7 +188,7 @@ def overview(request):
     """Overview method."""
     # Get user object
     logger.debug('---- User Request ----')
-    users_endpoint = '{}/{}'.format(FINANCIALS_ENDPOINT, 'users/5c2673c4634aa10004017c51')
+    users_endpoint = '{}/{}/{}'.format(FINANCIALS_ENDPOINT, 'users', USER_ID)
     user_response = requests.get(users_endpoint, headers={'Content-Type': 'application/json'})
     user = user_response.json()
 
